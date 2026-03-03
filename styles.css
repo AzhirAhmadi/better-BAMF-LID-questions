@@ -175,43 +175,71 @@ select:focus {
     backdrop-filter: blur(10px);
 }
 
-/* Bilingual text display */
-.bilingual-text {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+/* Question section with translate button */
+.question-section {
+    position: relative;
+    margin-bottom: 1.5rem;
 }
 
-.text-german, .text-english {
-    padding: 0.75rem;
-    border-radius: 6px;
-}
-
-.text-german {
-    background: #f8f9fa;
-    border-left: 4px solid #dc3545;
-}
-
-.text-english {
-    background: #e8f4fd;
-    border-left: 4px solid #0066cc;
-}
-
-.text-label {
-    font-size: 0.8rem;
+.translate-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.25rem;
-    opacity: 0.7;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 1;
 }
 
-.text-german .text-label {
-    color: #dc3545;
+.translate-btn:hover {
+    background: #0056b3;
+    transform: scale(1.05);
 }
 
-.text-english .text-label {
+.translate-btn.active {
+    background: #28a745;
+}
+
+.translate-btn.active:hover {
+    background: #218838;
+}
+
+/* Option with translate button */
+.option-container {
+    position: relative;
+    margin-bottom: 0.75rem;
+}
+
+.option-container .option {
+    margin-bottom: 0;
+}
+
+.option-container .translate-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+}
+
+/* Translation overlay */
+.translation-overlay {
+    background: #e8f4fd;
+    border: 2px solid #0066cc;
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    font-style: italic;
     color: #0066cc;
+    display: none;
+}
+
+.translation-overlay.show {
+    display: block;
 }
 
 /* Answers only mode */
@@ -229,6 +257,13 @@ select:focus {
     border-radius: 8px;
     padding: 1rem;
     margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.answer-display .translate-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
 }
 
 .answer-label {
@@ -267,11 +302,12 @@ select:focus {
 }
 
 .question-text {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     line-height: 1.6;
     margin-bottom: 1.5rem;
-    color: #2c3e50;
-    font-weight: 500;
+    color: #1a1a1a;
+    font-weight: 600;
+    padding-right: 3rem; /* Space for translate button */
 }
 
 /* Options */
@@ -342,8 +378,11 @@ select:focus {
 
 .option-text {
     flex: 1;
-    font-size: 0.95rem;
+    font-size: 1.1rem;
     line-height: 1.4;
+    font-weight: 500;
+    color: #1a1a1a;
+    padding-right: 2.5rem; /* Space for translate button */
 }
 
 /* Feedback */

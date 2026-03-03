@@ -4,9 +4,13 @@ class BAMFQuiz {
         this.questionsEN = [];
         this.currentQuestionIndex = 0;
         this.currentMode = 'quiz';
-        this.currentLanguage = 'de';
         this.userAnswers = [];
         this.stats = { correct: 0, wrong: 0 };
+        this.translationStates = {
+            question: false,
+            options: {},
+            answer: false
+        };
         
         this.init();
     }
@@ -15,6 +19,7 @@ class BAMFQuiz {
         try {
             await this.loadQuestions();
             this.setupEventListeners();
+            this.populateQuestionSelector();
             this.loadUserProgress();
             this.showQuestion();
             this.updateStats();
@@ -54,16 +59,19 @@ class BAMFQuiz {
     }
 
     setupEventListeners() {
-        // Language selector
-        document.getElementById('language-select').addEventListener('change', (e) => {
-            this.currentLanguage = e.target.value;
-            this.showQuestion();
-        });
-
         // Mode selector
         document.getElementById('mode-select').addEventListener('change', (e) => {
             this.currentMode = e.target.value;
+            this.resetTranslationStates();
             this.showQuestion();
+        });
+
+        // Question selector
+        document.getElementById('question-select').addEventListener('change', (e) => {
+            const questionNumber = parseInt(e.target.value);
+            if (questionNumber) {
+                this.goToQuestion(questionNumber);
+            }
         });
 
         // Navigation buttons
@@ -97,7 +105,7 @@ class BAMFQuiz {
     }
 
     get currentQuestions() {
-        return this.currentLanguage === 'en' || this.currentLanguage === 'both' ? this.questionsEN : this.questionsDE;
+        return this.questionsDE; // Always use German questions as primary
     }
 
     showQuestion() {
@@ -113,8 +121,11 @@ class BAMFQuiz {
         const progressPercentage = ((this.currentQuestionIndex + 1) / this.currentQuestions.length) * 100;
         document.getElementById('progress-fill').style.width = `${progressPercentage}%`;
 
-        // Show question text based on language mode
+        // Show German question with translation button
         this.displayQuestionText(question);
+        
+        // Update question selector
+        document.getElementById('question-select').value = question.number;
 
         // Show options
         this.showOptions(question);
@@ -142,50 +153,50 @@ class BAMFQuiz {
         const optionsContainer = document.getElementById('options');
         optionsContainer.innerHTML = '';
 
+        const englishQuestion = this.questionsEN[this.currentQuestionIndex];
+
         question.options.forEach((option, index) => {
             const optionEl = document.createElement('div');
-            optionEl.className = 'option';
-            optionEl.setAttribute('tabindex', '0');
+            optionEl.className = 'option-container';
             
             const letter = String.fromCharCode(65 + index); // A, B, C, D
             
-            if (this.currentLanguage === 'both') {
-                // Show both German and English options
-                const germanQuestion = this.questionsDE[this.currentQuestionIndex];
-                const englishQuestion = this.questionsEN[this.currentQuestionIndex];
-                
-                optionEl.innerHTML = `
+            optionEl.innerHTML = `
+                <div class="option" tabindex="0">
                     <div class="option-letter">${letter}</div>
                     <div class="option-text">
-                        <div class="bilingual-text">
-                            <div class="text-german">
-                                <div class="text-label">Deutsch</div>
-                                <div>${germanQuestion.options[index]}</div>
-                            </div>
-                            <div class="text-english">
-                                <div class="text-label">English</div>
-                                <div>${englishQuestion.options[index]}</div>
-                            </div>
+                        ${option}
+                        <div class="translation-overlay" id="option-translation-${index}">
+                            ${englishQuestion.options[index]}
                         </div>
                     </div>
-                `;
-            } else {
-                // Show single language option
-                optionEl.innerHTML = `
-                    <div class="option-letter">${letter}</div>
-                    <div class="option-text">${option}</div>
-                `;
-            }
+                    <button class="translate-btn" id="option-translate-btn-${index}">
+                        EN
+                    </button>
+                </div>
+            `;
 
-            // Add click handler
-            optionEl.addEventListener('click', () => {
+            const optionDiv = optionEl.querySelector('.option');
+            const translateBtn = optionEl.querySelector(`#option-translate-btn-${index}`);
+            
+            // Set up translate button
+            translateBtn.onclick = (e) => {
+                e.stopPropagation();
+                this.toggleOptionTranslation(index);
+            };
+            
+            // Set initial state
+            this.updateOptionTranslationState(index);
+
+            // Add click handler to the option div
+            optionDiv.addEventListener('click', () => {
                 if (this.currentMode === 'quiz') {
                     this.selectOption(index);
                 }
             });
 
             // Add keyboard handler
-            optionEl.addEventListener('keypress', (e) => {
+            optionDiv.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
                     if (this.currentMode === 'quiz') {
@@ -197,12 +208,36 @@ class BAMFQuiz {
             // Show correct answer in study mode
             if (this.currentMode === 'study') {
                 if (option === question.correctAnswer) {
-                    optionEl.classList.add('correct');
+                    optionDiv.classList.add('correct');
                 }
             }
 
             optionsContainer.appendChild(optionEl);
         });
+    }
+
+    toggleOptionTranslation(index) {
+        this.translationStates.options[index] = !this.translationStates.options[index];
+        this.updateOptionTranslationState(index);
+    }
+
+    updateOptionTranslationState(index) {
+        const isTranslated = this.translationStates.options[index] || false;
+        const translateBtn = document.getElementById(`option-translate-btn-${index}`);
+        const translationEl = document.getElementById(`option-translation-${index}`);
+        
+        if (translateBtn) {
+            translateBtn.className = isTranslated ? 'translate-btn active' : 'translate-btn';
+            translateBtn.textContent = isTranslated ? 'DE' : 'EN';
+        }
+        
+        if (translationEl) {
+            if (isTranslated) {
+                translationEl.classList.add('show');
+            } else {
+                translationEl.classList.remove('show');
+            }
+        }
     }
 
     selectOption(selectedIndex) {
@@ -279,71 +314,109 @@ class BAMFQuiz {
 
     displayQuestionText(question) {
         const questionTextEl = document.getElementById('question-text');
+        const translateBtn = document.getElementById('question-translate-btn');
+        const englishQuestion = this.questionsEN[this.currentQuestionIndex];
         
-        if (this.currentLanguage === 'both') {
-            // Show both German and English
-            const germanQuestion = this.questionsDE[this.currentQuestionIndex];
-            const englishQuestion = this.questionsEN[this.currentQuestionIndex];
-            
-            questionTextEl.innerHTML = `
-                <div class="bilingual-text">
-                    <div class="text-german">
-                        <div class="text-label">Deutsch</div>
-                        <div>${germanQuestion.questionText}</div>
-                    </div>
-                    <div class="text-english">
-                        <div class="text-label">English</div>
-                        <div>${englishQuestion.questionText}</div>
-                    </div>
-                </div>
-            `;
+        // Always show German first
+        questionTextEl.innerHTML = `
+            ${question.questionText}
+            <div class="translation-overlay" id="question-translation">
+                ${englishQuestion.questionText}
+            </div>
+        `;
+        
+        // Show translate button and set up click handler
+        translateBtn.style.display = 'block';
+        translateBtn.className = this.translationStates.question ? 'translate-btn active' : 'translate-btn';
+        translateBtn.textContent = this.translationStates.question ? 'DE' : 'EN';
+        
+        // Remove old event listeners and add new one
+        translateBtn.onclick = () => {
+            this.toggleQuestionTranslation();
+        };
+        
+        // Show/hide translation based on state
+        const translationEl = document.getElementById('question-translation');
+        if (this.translationStates.question) {
+            translationEl.classList.add('show');
         } else {
-            // Show single language
-            questionTextEl.textContent = question.questionText;
+            translationEl.classList.remove('show');
+        }
+    }
+
+    toggleQuestionTranslation() {
+        this.translationStates.question = !this.translationStates.question;
+        const translateBtn = document.getElementById('question-translate-btn');
+        const translationEl = document.getElementById('question-translation');
+        
+        translateBtn.className = this.translationStates.question ? 'translate-btn active' : 'translate-btn';
+        translateBtn.textContent = this.translationStates.question ? 'DE' : 'EN';
+        
+        if (this.translationStates.question) {
+            translationEl.classList.add('show');
+        } else {
+            translationEl.classList.remove('show');
         }
     }
 
     showAnswerOnly(question) {
         const optionsContainer = document.getElementById('options');
+        const englishQuestion = this.questionsEN[this.currentQuestionIndex];
         
-        if (this.currentLanguage === 'both') {
-            // Show both German and English answers
-            const germanQuestion = this.questionsDE[this.currentQuestionIndex];
-            const englishQuestion = this.questionsEN[this.currentQuestionIndex];
-            
-            optionsContainer.innerHTML = `
-                <div class="answer-display">
-                    <div class="answer-label">Correct Answer</div>
-                    <div class="bilingual-text">
-                        <div class="text-german">
-                            <div class="text-label">Deutsch</div>
-                            <div class="answer-text">${germanQuestion.correctAnswer}</div>
-                        </div>
-                        <div class="text-english">
-                            <div class="text-label">English</div>
-                            <div class="answer-text">${englishQuestion.correctAnswer}</div>
-                        </div>
+        optionsContainer.innerHTML = `
+            <div class="answer-display">
+                <div class="answer-label">Correct Answer</div>
+                <div class="answer-text">
+                    ${question.correctAnswer}
+                    <div class="translation-overlay" id="answer-translation">
+                        ${englishQuestion.correctAnswer}
                     </div>
                 </div>
-            `;
-        } else {
-            // Show single language answer
-            optionsContainer.innerHTML = `
-                <div class="answer-display">
-                    <div class="answer-label">Correct Answer</div>
-                    <div class="answer-text">${question.correctAnswer}</div>
-                </div>
-            `;
-        }
+                <button class="translate-btn" id="answer-translate-btn">EN</button>
+            </div>
+        `;
+        
+        // Set up translate button for answer
+        const answerTranslateBtn = document.getElementById('answer-translate-btn');
+        answerTranslateBtn.onclick = () => {
+            this.toggleAnswerTranslation();
+        };
+        
+        // Set initial state
+        this.updateAnswerTranslationState();
         
         // Hide feedback in answers-only mode
         const feedbackEl = document.getElementById('feedback');
         feedbackEl.style.display = 'none';
     }
 
+    toggleAnswerTranslation() {
+        this.translationStates.answer = !this.translationStates.answer;
+        this.updateAnswerTranslationState();
+    }
+
+    updateAnswerTranslationState() {
+        const translateBtn = document.getElementById('answer-translate-btn');
+        const translationEl = document.getElementById('answer-translation');
+        
+        if (translateBtn) {
+            translateBtn.className = this.translationStates.answer ? 'translate-btn active' : 'translate-btn';
+            translateBtn.textContent = this.translationStates.answer ? 'DE' : 'EN';
+        }
+        
+        if (translationEl) {
+            if (this.translationStates.answer) {
+                translationEl.classList.add('show');
+            } else {
+                translationEl.classList.remove('show');
+            }
+        }
+    }
+
     nextQuestion() {
         if (this.currentQuestionIndex < this.currentQuestions.length - 1) {
             this.currentQuestionIndex++;
+            this.resetTranslationStates();
             this.showQuestion();
         }
     }
@@ -351,6 +424,7 @@ class BAMFQuiz {
     previousQuestion() {
         if (this.currentQuestionIndex > 0) {
             this.currentQuestionIndex--;
+            this.resetTranslationStates();
             this.showQuestion();
         }
     }
@@ -358,7 +432,37 @@ class BAMFQuiz {
     showRandomQuestion() {
         const randomIndex = Math.floor(Math.random() * this.currentQuestions.length);
         this.currentQuestionIndex = randomIndex;
+        this.resetTranslationStates();
         this.showQuestion();
+    }
+
+    populateQuestionSelector() {
+        const selector = document.getElementById('question-select');
+        selector.innerHTML = '<option value="">Select Question...</option>';
+        
+        for (let i = 1; i <= this.questionsDE.length; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = `Question ${i}`;
+            selector.appendChild(option);
+        }
+    }
+
+    goToQuestion(questionNumber) {
+        const index = this.questionsDE.findIndex(q => q.number === questionNumber);
+        if (index >= 0) {
+            this.currentQuestionIndex = index;
+            this.resetTranslationStates();
+            this.showQuestion();
+        }
+    }
+
+    resetTranslationStates() {
+        this.translationStates = {
+            question: false,
+            options: {},
+            answer: false
+        };
     }
 
     updateStats() {

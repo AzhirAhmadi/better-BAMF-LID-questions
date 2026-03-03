@@ -14,20 +14,18 @@
             
             <div class="controls">
                 <div class="control-group">
-                    <label for="language-select">Language:</label>
-                    <select id="language-select">
-                        <option value="de">Deutsch</option>
-                        <option value="en">English</option>
-                        <option value="both">Deutsch + English</option>
-                    </select>
-                </div>
-                
-                <div class="control-group">
                     <label for="mode-select">Mode:</label>
                     <select id="mode-select">
                         <option value="quiz">Quiz Mode</option>
                         <option value="study">Study Mode (Show Answers)</option>
                         <option value="answers">Answers Only</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="question-select">Go to Question:</label>
+                    <select id="question-select">
+                        <!-- Options will be populated by JavaScript -->
                     </select>
                 </div>
                 
@@ -50,8 +48,13 @@
                     <span class="question-total">/ 310</span>
                 </div>
                 
-                <div class="question-text" id="question-text">
-                    Loading questions...
+                <div class="question-section">
+                    <div class="question-text" id="question-text">
+                        Loading questions...
+                    </div>
+                    <button class="translate-btn" id="question-translate-btn" style="display: none;">
+                        EN
+                    </button>
                 </div>
                 
                 <div class="options" id="options">
