@@ -189,7 +189,11 @@ class BAMFQuiz {
             this.updateOptionTranslationState(index);
 
             // Add click handler to the option div
-            optionDiv.addEventListener('click', () => {
+            optionDiv.addEventListener('click', (e) => {
+                // Don't trigger if clicking on translate button
+                if (e.target.classList.contains('translate-btn')) {
+                    return;
+                }
                 if (this.currentMode === 'quiz') {
                     this.selectOption(index);
                 }
