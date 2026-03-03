@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAMF Leben in Deutschland - Citizenship Test</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>BAMF Leben in Deutschland</h1>
+            <p class="subtitle">German Citizenship Test Practice</p>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label for="language-select">Language:</label>
+                    <select id="language-select">
+                        <option value="de">Deutsch</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="mode-select">Mode:</label>
+                    <select id="mode-select">
+                        <option value="quiz">Quiz Mode</option>
+                        <option value="study">Study Mode (Show Answers)</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <button id="random-question" class="btn btn-secondary">Random Question</button>
+                    <button id="reset-progress" class="btn btn-secondary">Reset Progress</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="main">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+                <span class="progress-text" id="progress-text">Question 1 of 310</span>
+            </div>
+
+            <div class="question-card" id="question-card">
+                <div class="question-header">
+                    <span class="question-number" id="question-number">Question 1</span>
+                    <span class="question-total">/ 310</span>
+                </div>
+                
+                <div class="question-text" id="question-text">
+                    Loading questions...
+                </div>
+                
+                <div class="options" id="options">
+                    <!-- Options will be loaded here -->
+                </div>
+                
+                <div class="feedback" id="feedback" style="display: none;">
+                    <!-- Feedback will be shown here -->
+                </div>
+                
+                <div class="navigation">
+                    <button id="prev-btn" class="btn btn-nav" disabled>← Previous</button>
+                    <button id="next-btn" class="btn btn-nav">Next →</button>
+                </div>
+            </div>
+
+            <div class="stats" id="stats">
+                <div class="stat-item">
+                    <span class="stat-label">Correct:</span>
+                    <span class="stat-value" id="correct-count">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Wrong:</span>
+                    <span class="stat-value" id="wrong-count">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Accuracy:</span>
+                    <span class="stat-value" id="accuracy">0%</span>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>Practice for the German citizenship test based on official BAMF questions.</p>
+            <p>This is an unofficial study tool. Please verify answers with official sources.</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

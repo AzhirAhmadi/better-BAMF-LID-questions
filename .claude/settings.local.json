@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"\nimport json\nwith open(''/Users/azhir.ahmadi/personal/better-BAMF-LID-questions/bamf-questions.json'', ''r'', encoding=''utf-8'') as f:\n    data = json.load(f)\n    print(f''Total questions: {len(data[\"\"questions\"\"])}'')\n    print(f''First question: {data[\"\"questions\"\"][0][\"\"number\"\"]}'')\n    print(f''Last question: {data[\"\"questions\"\"][-1][\"\"number\"\"]}'')\n\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -694,6 +694,28 @@
       "correctAnswer": "die Gerichte"
     },
     {
+      "number": 64,
+      "questionText": "Die Bundesrepublik Deutschland ist heute gegliedert in ...",
+      "options": [
+        "vier Besatzungszonen.",
+        "einen Oststaat und einen Weststaat.",
+        "16 Kantone.",
+        "Bund, Länder und Kommunen."
+      ],
+      "correctAnswer": "Bund, Länder und Kommunen."
+    },
+    {
+      "number": 65,
+      "questionText": "Es gehört nicht zu den Aufgaben des Deutschen Bundestages, ...",
+      "options": [
+        "Gesetze zu entwerfen.",
+        "die Bundesregierung zu kontrollieren.",
+        "den Bundeskanzler / die Bundeskanzlerin zu wählen.",
+        "das Bundeskabinett zu bilden."
+      ],
+      "correctAnswer": "das Bundeskabinett zu bilden."
+    },
+    {
       "number": 66,
       "questionText": "Welche Städte haben die größten jüdischen Gemeinden in Deutschland?",
       "options": [
@@ -1495,6 +1517,17 @@
         "den Arbeitgeber / die Arbeitgeberin bei der Polizei anzeigen"
       ],
       "correctAnswer": "Kündigungsschutzklage erheben"
+    },
+    {
+      "number": 139,
+      "questionText": "Wann kommt es in Deutschland zu einem Prozess vor Gericht ? Wenn jemand ...",
+      "options": [
+        "zu einer anderen Religion übertritt.",
+        "eine Straftat begangen hat und angeklagt wird.",
+        "eine andere Meinung als die der Regierung vertritt.",
+        "sein Auto falsch geparkt hat und es abgeschleppt wird."
+      ],
+      "correctAnswer": "eine Straftat begangen hat und angeklagt wird."
     },
     {
       "number": 140,
@@ -2300,6 +2333,17 @@
       "correctAnswer": "Bundesrepublik Deutschland"
     },
     {
+      "number": 213,
+      "questionText": "Wie viele Einwohner hat Deutschland?",
+      "options": [
+        "70 Millionen",
+        "78 Millionen",
+        "84 Millionen",
+        "90 Millionen"
+      ],
+      "correctAnswer": "84 Millionen"
+    },
+    {
       "number": 214,
       "questionText": "Weiche Farben hat die deutsche Flagge?",
       "options": [
@@ -3101,6 +3145,28 @@
         "das Betriebsmanagement"
       ],
       "correctAnswer": "der Betriebsrat"
+    },
+    {
+      "number": 287,
+      "questionText": "Sie möchten bei einer Firma in Deutschland Ihr Arbeitsverhältnis beenden. Was müssen Sie beachten?",
+      "options": [
+        "die Gehaltszahlungen",
+        "die Arbeitszeit",
+        "die Kündigungsfrist",
+        "die Versícherungspflicht"
+      ],
+      "correctAnswer": "die Kündigungsfrist"
+    },
+    {
+      "number": 288,
+      "questionText": "Woraus begründet sich Deutschlands besondere Verantwortung für Israel?",
+      "options": [
+        "aus der Mitgliedschaft in der Europäischen Union (EU)",
+        "aus den nationalsozialistischen Verbrechen gegen Juden",
+        "aus dem Grundgesetz der Bundesrepublik Deutschland",
+        "aus der christlichen Tradition"
+      ],
+      "correctAnswer": "aus den nationalsozialistischen Verbrechen gegen Juden"
     },
     {
       "number": 289,
