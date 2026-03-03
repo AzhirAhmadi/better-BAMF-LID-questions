@@ -175,6 +175,77 @@ select:focus {
     backdrop-filter: blur(10px);
 }
 
+/* Bilingual text display */
+.bilingual-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.text-german, .text-english {
+    padding: 0.75rem;
+    border-radius: 6px;
+}
+
+.text-german {
+    background: #f8f9fa;
+    border-left: 4px solid #dc3545;
+}
+
+.text-english {
+    background: #e8f4fd;
+    border-left: 4px solid #0066cc;
+}
+
+.text-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+    opacity: 0.7;
+}
+
+.text-german .text-label {
+    color: #dc3545;
+}
+
+.text-english .text-label {
+    color: #0066cc;
+}
+
+/* Answers only mode */
+.answers-only-mode .options {
+    display: none;
+}
+
+.answers-only-mode .question-text {
+    margin-bottom: 0.75rem;
+}
+
+.answer-display {
+    background: #d4edda;
+    border: 2px solid #28a745;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.answer-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #155724;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.5px;
+}
+
+.answer-text {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #155724;
+}
+
 .question-header {
     display: flex;
     justify-content: space-between;

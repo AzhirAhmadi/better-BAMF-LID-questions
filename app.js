@@ -97,7 +97,7 @@ class BAMFQuiz {
     }
 
     get currentQuestions() {
-        return this.currentLanguage === 'en' ? this.questionsEN : this.questionsDE;
+        return this.currentLanguage === 'en' || this.currentLanguage === 'both' ? this.questionsEN : this.questionsDE;
     }
 
     showQuestion() {
@@ -113,8 +113,8 @@ class BAMFQuiz {
         const progressPercentage = ((this.currentQuestionIndex + 1) / this.currentQuestions.length) * 100;
         document.getElementById('progress-fill').style.width = `${progressPercentage}%`;
 
-        // Show question text
-        document.getElementById('question-text').textContent = question.questionText;
+        // Show question text based on language mode
+        this.displayQuestionText(question);
 
         // Show options
         this.showOptions(question);
@@ -123,10 +123,16 @@ class BAMFQuiz {
         document.getElementById('prev-btn').disabled = this.currentQuestionIndex === 0;
         document.getElementById('next-btn').disabled = this.currentQuestionIndex === this.currentQuestions.length - 1;
 
-        // Hide feedback initially in quiz mode
+        // Update question card mode styling
+        const questionCard = document.getElementById('question-card');
+        questionCard.className = this.currentMode === 'answers' ? 'question-card answers-only-mode' : 'question-card';
+
+        // Handle different modes
         const feedbackEl = document.getElementById('feedback');
         if (this.currentMode === 'quiz') {
             feedbackEl.style.display = 'none';
+        } else if (this.currentMode === 'answers') {
+            this.showAnswerOnly(question);
         } else {
             this.showCorrectAnswer(question);
         }
@@ -143,10 +149,33 @@ class BAMFQuiz {
             
             const letter = String.fromCharCode(65 + index); // A, B, C, D
             
-            optionEl.innerHTML = `
-                <div class="option-letter">${letter}</div>
-                <div class="option-text">${option}</div>
-            `;
+            if (this.currentLanguage === 'both') {
+                // Show both German and English options
+                const germanQuestion = this.questionsDE[this.currentQuestionIndex];
+                const englishQuestion = this.questionsEN[this.currentQuestionIndex];
+                
+                optionEl.innerHTML = `
+                    <div class="option-letter">${letter}</div>
+                    <div class="option-text">
+                        <div class="bilingual-text">
+                            <div class="text-german">
+                                <div class="text-label">Deutsch</div>
+                                <div>${germanQuestion.options[index]}</div>
+                            </div>
+                            <div class="text-english">
+                                <div class="text-label">English</div>
+                                <div>${englishQuestion.options[index]}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Show single language option
+                optionEl.innerHTML = `
+                    <div class="option-letter">${letter}</div>
+                    <div class="option-text">${option}</div>
+                `;
+            }
 
             // Add click handler
             optionEl.addEventListener('click', () => {
@@ -248,6 +277,69 @@ class BAMFQuiz {
         `;
     }
 
+    displayQuestionText(question) {
+        const questionTextEl = document.getElementById('question-text');
+        
+        if (this.currentLanguage === 'both') {
+            // Show both German and English
+            const germanQuestion = this.questionsDE[this.currentQuestionIndex];
+            const englishQuestion = this.questionsEN[this.currentQuestionIndex];
+            
+            questionTextEl.innerHTML = `
+                <div class="bilingual-text">
+                    <div class="text-german">
+                        <div class="text-label">Deutsch</div>
+                        <div>${germanQuestion.questionText}</div>
+                    </div>
+                    <div class="text-english">
+                        <div class="text-label">English</div>
+                        <div>${englishQuestion.questionText}</div>
+                    </div>
+                </div>
+            `;
+        } else {
+            // Show single language
+            questionTextEl.textContent = question.questionText;
+        }
+    }
+
+    showAnswerOnly(question) {
+        const optionsContainer = document.getElementById('options');
+        
+        if (this.currentLanguage === 'both') {
+            // Show both German and English answers
+            const germanQuestion = this.questionsDE[this.currentQuestionIndex];
+            const englishQuestion = this.questionsEN[this.currentQuestionIndex];
+            
+            optionsContainer.innerHTML = `
+                <div class="answer-display">
+                    <div class="answer-label">Correct Answer</div>
+                    <div class="bilingual-text">
+                        <div class="text-german">
+                            <div class="text-label">Deutsch</div>
+                            <div class="answer-text">${germanQuestion.correctAnswer}</div>
+                        </div>
+                        <div class="text-english">
+                            <div class="text-label">English</div>
+                            <div class="answer-text">${englishQuestion.correctAnswer}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            // Show single language answer
+            optionsContainer.innerHTML = `
+                <div class="answer-display">
+                    <div class="answer-label">Correct Answer</div>
+                    <div class="answer-text">${question.correctAnswer}</div>
+                </div>
+            `;
+        }
+        
+        // Hide feedback in answers-only mode
+        const feedbackEl = document.getElementById('feedback');
+        feedbackEl.style.display = 'none';
+    }
 
     nextQuestion() {
         if (this.currentQuestionIndex < this.currentQuestions.length - 1) {
