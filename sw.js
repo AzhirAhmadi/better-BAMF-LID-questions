@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bamf-quiz-v1';
+const CACHE_NAME = 'bamf-quiz-v2';
 const urlsToCache = [
     './',
     './index.html',
@@ -13,6 +13,24 @@ self.addEventListener('install', (event) => {
         caches.open(CACHE_NAME)
             .then((cache) => cache.addAll(urlsToCache))
     );
+    // Force activation of new service worker
+    self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cacheName) => {
+                    if (cacheName !== CACHE_NAME) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
+    );
+    // Take control immediately
+    event.waitUntil(clients.claim());
 });
 
 self.addEventListener('fetch', (event) => {
