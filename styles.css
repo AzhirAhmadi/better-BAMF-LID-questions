@@ -215,7 +215,7 @@ select:focus {
 }
 
 /* Answers only mode */
-.answers-only-mode .options {
+.answers-only-mode .option {
     display: none;
 }
 
