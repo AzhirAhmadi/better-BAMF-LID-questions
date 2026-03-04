@@ -4,8 +4,7 @@ const urlsToCache = [
     './index.html',
     './styles.css',
     './app.js',
-    './bamf-questions.json',
-    './bamf-questions-en.json'
+    './bamf-questions-merged.json'
 ];
 
 self.addEventListener('install', (event) => {
