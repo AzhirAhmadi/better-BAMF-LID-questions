@@ -21,15 +21,17 @@ class BAMFQuiz {
         const mainContent = document.getElementById('main-content');
         const acceptBtn = document.getElementById('accept-disclaimer');
         
+        // Always start with a clean state
+        disclaimerBox.classList.remove('hidden');
+        disclaimerBox.style.display = '';
+        mainContent.classList.remove('visible');
+        
         if (disclaimerAccepted === 'true') {
             // User has already accepted, hide disclaimer and show main content
             disclaimerBox.classList.add('hidden');
             mainContent.classList.add('visible');
-        } else {
-            // Show disclaimer, hide main content
-            disclaimerBox.classList.remove('hidden');
-            mainContent.classList.remove('visible');
         }
+        // If not accepted, disclaimer stays visible and main content stays hidden
         
         acceptBtn.addEventListener('click', () => {
             localStorage.setItem('bamf-disclaimer-accepted', 'true');
