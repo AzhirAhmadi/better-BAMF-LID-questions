@@ -78,17 +78,52 @@ npm run test
 node capture-questions.js --from=50 --limit=10
 ```
 
+## 🌍 Translation Tool
+
+### Automated Google Translate Integration
+
+The translation system converts German BAMF questions to English using Google Translate's free API, creating a bilingual JSON with safe keyed structure.
+
+### Run Translation
+
+```bash
+# Translate all 310 questions
+node translate-bamf.js
+
+# Resume from last translated question
+node translate-bamf.js --resume
+
+# Test with first 5 questions only
+node translate-bamf.js --test
+
+# Start from specific question
+node translate-bamf.js --from=50
+
+# Limit number of questions
+node translate-bamf.js --limit=10
+```
+
+### Translation Features
+
+- **Safe Structure**: Q/A/B/C/D keys prevent option misalignment
+- **Progress Tracking**: Saves progress every 5 questions
+- **Error Recovery**: Continues on failures with error markers
+- **Rate Limiting**: 2-second delays respect Google's limits
+- **Resume Support**: Skip already completed translations
+- **Quality Control**: Validates completeness of translations
+
 ## 📁 File Structure
 
 ```
-├── index.html              # Main web application (with cache-busting)
-├── styles.css              # Mobile-first responsive CSS (v2.0)
-├── app.js                  # Quiz functionality with smart translations (v2.0)
-├── sw.js                   # Service worker for offline support (v2.0)
-├── bamf-questions.json     # German questions (310 total)
-├── bamf-questions-en.json  # English translations (310 total)
-├── capture-questions.js    # Data scraping tool
-└── package.json           # Dependencies for scraper
+├── index.html                  # Main web application (v3.0)
+├── styles.css                  # Mobile-first responsive CSS (v3.0)
+├── app.js                      # Quiz functionality with keyed options (v3.0)
+├── sw.js                       # Service worker for offline support
+├── bamf-questions.json         # German questions (310 total) - source data
+├── bamf-questions-merged.json  # Bilingual questions (Q/A/B/C/D structure) - primary
+├── capture-questions.js        # Data scraping tool
+├── translate-bamf.js          # Translation automation tool
+└── package.json               # Dependencies for scraper and translator
 ```
 
 ## 🚀 Deploy to GitHub Pages
@@ -100,8 +135,46 @@ node capture-questions.js --from=50 --limit=10
 
 ## 📋 JSON Structure
 
-Questions are stored in identical format for both languages:
+**New Bilingual Structure (v3.0)** - Keyed options for translation safety:
 
+```json
+{
+  "questions": [
+    {
+      "number": 1,
+      "Q": {
+        "de": "In Deutschland dürfen Menschen offen etwas gegen die Regierung sagen, weil...",
+        "en": "In Germany, people are allowed to openly say something against the government because..."
+      },
+      "A": {
+        "de": "hier Religionsfreiheit gilt.",
+        "en": "freedom of religion applies here."
+      },
+      "B": {
+        "de": "die Menschen Steuern zahlen.",
+        "en": "people pay taxes."
+      },
+      "C": {
+        "de": "die Menschen das Wahlrecht haben.",
+        "en": "people have the right to vote."
+      },
+      "D": {
+        "de": "hier Meinungsfreiheit gilt.",
+        "en": "freedom of opinion applies here."
+      },
+      "answer": "D"
+    }
+  ],
+  "metadata": {
+    "totalQuestions": 310,
+    "lastUpdated": "2026-03-04T22:45:30.794Z",
+    "translationService": "Google Translate",
+    "structure": "BAMF Optimized (Q/A/B/C/D keys)"
+  }
+}
+```
+
+**Legacy Structure** - German source data only:
 ```json
 {
   "questions": [
@@ -169,7 +242,27 @@ Questions are stored in identical format for both languages:
 
 ## 📋 Version History
 
-### **Version 2.0** (Latest) - Enhanced Learning Experience
+### **Version 3.0** (Latest) - Automated Translation & Legal Protection
+🤖 **Translation Automation:**
+- **Google Translate Integration**: Automated translation of all 310 questions
+- **Safe Keyed Structure**: Q/A/B/C/D format prevents option misalignment
+- **Translation Tool**: Complete automation with resume/test capabilities
+- **Quality Assurance**: Validation and error recovery for reliable translations
+
+🛡️ **Legal & Compliance:**
+- **Comprehensive Disclaimer**: OCR/AI processing and translation notices
+- **Data Source Attribution**: Clear dating of capture (March 2026) and translation (March 4, 2026)
+- **Legal Protection**: Full liability disclaimers and usage warnings
+- **User Consent**: Required disclaimer acceptance with localStorage persistence
+- **Official Source Links**: Direct links to BAMF website for verification
+
+🔧 **Technical Improvements:**
+- **Single Data Source**: Merged bilingual JSON replaces separate files
+- **Keyed Options**: A/B/C/D structure prevents array-based translation errors
+- **Enhanced UI**: Updated to use new data structure with improved error handling
+- **Professional Disclaimers**: Styled warning box with comprehensive legal notices
+
+### **Version 2.0** - Enhanced Learning Experience
 🎯 **Major UX Improvements:**
 - **German-First Design**: Larger, bolder German text (1.3rem, font-weight: 600)
 - **Smart Translation System**: Individual EN/DE toggle buttons for questions, options, answers
@@ -190,6 +283,26 @@ Questions are stored in identical format for both languages:
 - Quiz and study modes with progress tracking
 - Mobile-responsive design with offline support
 
-## ⚖️ Legal Notice
+## ⚖️ Legal Notice & Disclaimer
 
-This is an unofficial study tool. Questions are extracted from the official BAMF website for educational purposes. Please verify answers with official sources before your actual test.
+**⚠️ IMPORTANT: This is an unofficial study tool and not affiliated with BAMF or the German government.**
+
+### Data Sources & Processing
+- **German Text**: Extracted in March 2026 from official BAMF website using OCR (Optical Character Recognition) and AI processing. Some text may contain recognition errors.
+- **English Translations**: Generated on March 4, 2026 using Google Translate API. Translations may not be fully accurate or reflect legal nuances.
+- **No Guarantee**: We provide no warranties regarding accuracy, completeness, or legal validity of the content.
+
+### Legal Protection
+- Always verify answers with **official BAMF sources** before your actual test
+- This tool is for **study purposes only** and should not be your sole preparation method  
+- We assume **no liability** for any consequences arising from use of this tool
+- For official information, visit: **[www.bamf.de](https://www.bamf.de)**
+
+### Usage Terms
+By using this tool, you acknowledge that you understand the limitations above and agree to use this tool at your own risk for educational purposes only.
+
+---
+
+**Official BAMF Resources:**
+- [BAMF Leben in Deutschland Test](https://www.bamf.de/DE/Themen/Integration/ZugewanderteTeilnehmende/Integrationskurse/InhaltAblauf/Orientierungskurs/orientierungskurs-node.html)
+- [Practice Questions (Official)](https://oet.bamf.de/ords/oetut/f?p=514:1)
