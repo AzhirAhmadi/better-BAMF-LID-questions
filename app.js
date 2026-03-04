@@ -1,7 +1,6 @@
 class BAMFQuiz {
     constructor() {
-        this.questionsDE = [];
-        this.questionsEN = [];
+        this.questions = [];
         this.currentQuestionIndex = 0;
         this.currentMode = 'quiz';
         this.userAnswers = [];
@@ -12,10 +11,47 @@ class BAMFQuiz {
             answer: false
         };
         
+        this.initDisclaimer();
         this.init();
     }
 
+    initDisclaimer() {
+        const disclaimerAccepted = localStorage.getItem('bamf-disclaimer-accepted');
+        const disclaimerBox = document.querySelector('.disclaimer-box');
+        const mainContent = document.getElementById('main-content');
+        const acceptBtn = document.getElementById('accept-disclaimer');
+        
+        if (disclaimerAccepted === 'true') {
+            // User has already accepted, hide disclaimer and show main content
+            disclaimerBox.classList.add('hidden');
+            mainContent.classList.add('visible');
+        } else {
+            // Show disclaimer, hide main content
+            disclaimerBox.classList.remove('hidden');
+            mainContent.classList.remove('visible');
+        }
+        
+        acceptBtn.addEventListener('click', () => {
+            localStorage.setItem('bamf-disclaimer-accepted', 'true');
+            disclaimerBox.classList.add('hidden');
+            mainContent.classList.add('visible');
+            
+            // Small delay to ensure the content is visible before initializing
+            setTimeout(() => {
+                if (this.questions.length === 0) {
+                    this.init(); // Initialize app if not already done
+                }
+            }, 100);
+        });
+    }
+
     async init() {
+        // Only initialize if disclaimer has been accepted
+        const disclaimerAccepted = localStorage.getItem('bamf-disclaimer-accepted');
+        if (disclaimerAccepted !== 'true') {
+            return; // Wait for disclaimer acceptance
+        }
+        
         try {
             await this.loadQuestions();
             this.setupEventListeners();
@@ -31,27 +67,19 @@ class BAMFQuiz {
 
     async loadQuestions() {
         try {
-            // Load German questions
-            const responseDE = await fetch('./bamf-questions.json');
-            if (!responseDE.ok) {
-                throw new Error(`HTTP error loading German questions! status: ${responseDE.status}`);
+            // Load merged bilingual questions
+            const response = await fetch('./bamf-questions-merged.json');
+            if (!response.ok) {
+                throw new Error(`HTTP error loading questions! status: ${response.status}`);
             }
-            const dataDE = await responseDE.json();
-            this.questionsDE = dataDE.questions || [];
+            const data = await response.json();
+            this.questions = data.questions || [];
             
-            // Load English questions
-            const responseEN = await fetch('./bamf-questions-en.json');
-            if (!responseEN.ok) {
-                throw new Error(`HTTP error loading English questions! status: ${responseEN.status}`);
-            }
-            const dataEN = await responseEN.json();
-            this.questionsEN = dataEN.questions || [];
-            
-            if (this.questionsDE.length === 0 || this.questionsEN.length === 0) {
-                throw new Error('No questions found in data files');
+            if (this.questions.length === 0) {
+                throw new Error('No questions found in data file');
             }
             
-            console.log(`Loaded ${this.questionsDE.length} German questions and ${this.questionsEN.length} English questions`);
+            console.log(`Loaded ${this.questions.length} bilingual questions`);
         } catch (error) {
             console.error('Error loading questions:', error);
             throw error;
@@ -105,7 +133,7 @@ class BAMFQuiz {
     }
 
     get currentQuestions() {
-        return this.questionsDE; // Always use German questions as primary
+        return this.questions; // Use merged bilingual questions
     }
 
     showQuestion() {
@@ -153,9 +181,9 @@ class BAMFQuiz {
         const optionsContainer = document.getElementById('options');
         optionsContainer.innerHTML = '';
 
-        const englishQuestion = this.questionsEN[this.currentQuestionIndex];
-
-        question.options.forEach((option, index) => {
+        const optionKeys = ['A', 'B', 'C', 'D'];
+        optionKeys.forEach((optionKey, index) => {
+            const option = question[optionKey].de;
             const optionEl = document.createElement('div');
             optionEl.className = 'option-container';
             
@@ -167,7 +195,7 @@ class BAMFQuiz {
                     <div class="option-text">
                         ${option}
                         <div class="translation-overlay" id="option-translation-${index}">
-                            ${englishQuestion.options[index]}
+                            ${question[optionKey].en}
                         </div>
                     </div>
                     <button class="translate-btn" id="option-translate-btn-${index}">
@@ -211,7 +239,7 @@ class BAMFQuiz {
 
             // Show correct answer in study mode
             if (this.currentMode === 'study') {
-                if (option === question.correctAnswer) {
+                if (optionKey === question.answer) {
                     optionDiv.classList.add('correct');
                 }
             }
@@ -248,13 +276,14 @@ class BAMFQuiz {
         if (this.currentMode !== 'quiz') return;
 
         const question = this.currentQuestions[this.currentQuestionIndex];
-        const selectedOption = question.options[selectedIndex];
-        const isCorrect = selectedOption === question.correctAnswer;
+        const optionKeys = ['A', 'B', 'C', 'D'];
+        const selectedOptionKey = optionKeys[selectedIndex];
+        const isCorrect = selectedOptionKey === question.answer;
 
         // Save user answer
         this.userAnswers[this.currentQuestionIndex] = {
             questionNumber: question.number,
-            selectedOption,
+            selectedOption: selectedOptionKey,
             isCorrect,
             timestamp: new Date()
         };
@@ -276,13 +305,13 @@ class BAMFQuiz {
             }
             
             // Show correct answer
-            if (question.options[index] === question.correctAnswer) {
+            if (optionKeys[index] === question.answer) {
                 optionEl.classList.add('correct');
             }
         });
 
         // Show feedback
-        this.showFeedback(isCorrect, question.correctAnswer);
+        this.showFeedback(isCorrect, question[question.answer].de);
         this.updateStats();
         this.saveUserProgress();
 
@@ -312,20 +341,19 @@ class BAMFQuiz {
         
         feedbackEl.innerHTML = `
             <div class="feedback-text">✓ Correct Answer</div>
-            <div class="feedback-answer">${question.correctAnswer}</div>
+            <div class="feedback-answer">${question[question.answer].de}</div>
         `;
     }
 
     displayQuestionText(question) {
         const questionTextEl = document.getElementById('question-text');
         const translateBtn = document.getElementById('question-translate-btn');
-        const englishQuestion = this.questionsEN[this.currentQuestionIndex];
         
         // Always show German first
         questionTextEl.innerHTML = `
-            ${question.questionText}
+            ${question.Q.de}
             <div class="translation-overlay" id="question-translation">
-                ${englishQuestion.questionText}
+                ${question.Q.en}
             </div>
         `;
         
@@ -365,15 +393,14 @@ class BAMFQuiz {
 
     showAnswerOnly(question) {
         const optionsContainer = document.getElementById('options');
-        const englishQuestion = this.questionsEN[this.currentQuestionIndex];
         
         optionsContainer.innerHTML = `
             <div class="answer-display">
                 <div class="answer-label">Correct Answer</div>
                 <div class="answer-text">
-                    ${question.correctAnswer}
+                    ${question[question.answer].de}
                     <div class="translation-overlay" id="answer-translation">
-                        ${englishQuestion.correctAnswer}
+                        ${question[question.answer].en}
                     </div>
                 </div>
                 <button class="translate-btn" id="answer-translate-btn">EN</button>
@@ -444,7 +471,7 @@ class BAMFQuiz {
         const selector = document.getElementById('question-select');
         selector.innerHTML = '<option value="">Select Question...</option>';
         
-        for (let i = 1; i <= this.questionsDE.length; i++) {
+        for (let i = 1; i <= this.questions.length; i++) {
             const option = document.createElement('option');
             option.value = i;
             option.textContent = `Question ${i}`;
@@ -453,7 +480,7 @@ class BAMFQuiz {
     }
 
     goToQuestion(questionNumber) {
-        const index = this.questionsDE.findIndex(q => q.number === questionNumber);
+        const index = this.questions.findIndex(q => q.number === questionNumber);
         if (index >= 0) {
             this.currentQuestionIndex = index;
             this.resetTranslationStates();
