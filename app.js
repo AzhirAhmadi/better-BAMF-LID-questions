@@ -123,6 +123,11 @@ class BAMFQuiz {
             this.resetProgress();
         });
 
+        // Feedback button
+        document.getElementById('feedback-btn').addEventListener('click', () => {
+            this.openFeedback();
+        });
+
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft') this.previousQuestion();
@@ -558,6 +563,35 @@ class BAMFQuiz {
                 </button>
             </div>
         `;
+    }
+
+    openFeedback() {
+        const currentQuestion = this.currentQuestions[this.currentQuestionIndex];
+        const questionNumber = currentQuestion ? currentQuestion.number : 'Unknown';
+        const questionText = currentQuestion ? currentQuestion.Q.de.substring(0, 100) + '...' : 'No question loaded';
+        
+        // Create GitHub issue URL with pre-filled content
+        const title = `Issue with Question ${questionNumber}`;
+        const body = `**Question Number:** ${questionNumber}
+
+**Question Text (German):** ${questionText}
+
+**Issue Description:**
+[Please describe the issue you found - translation error, technical problem, etc.]
+
+**Steps to Reproduce:**
+[If applicable, describe how to reproduce the issue]
+
+**Additional Information:**
+[Any other relevant details]
+
+---
+*Reported from BAMF Quiz App*`;
+
+        const githubURL = `https://github.com/AzhirAhmadi/better-BAMF-LID-questions/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
+        
+        // Open in new tab
+        window.open(githubURL, '_blank');
     }
 }
 
