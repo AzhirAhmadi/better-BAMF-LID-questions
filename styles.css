@@ -29,6 +29,96 @@ body {
     backdrop-filter: blur(10px);
 }
 
+/* Disclaimer Styles */
+.disclaimer-box {
+    background: #fff8dc;
+    border: 2px solid #ff6b6b;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.2);
+    position: relative;
+}
+
+.disclaimer-box.hidden {
+    display: none;
+}
+
+.disclaimer-box h3 {
+    color: #d63031;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: 1.3rem;
+}
+
+.disclaimer-content {
+    margin-bottom: 1.5rem;
+}
+
+.disclaimer-section {
+    margin-bottom: 1.2rem;
+}
+
+.disclaimer-section h4 {
+    color: #2d3436;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    border-bottom: 2px solid #ff6b6b;
+    padding-bottom: 0.2rem;
+}
+
+.disclaimer-section ul {
+    margin-left: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.disclaimer-section li {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+}
+
+.disclaimer-section a {
+    color: #0984e3;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.disclaimer-section a:hover {
+    text-decoration: underline;
+}
+
+.disclaimer-btn {
+    display: block;
+    width: 100%;
+    max-width: 400px;
+    margin: 1.5rem auto 0;
+    padding: 1rem 2rem;
+    background: #00b894;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.disclaimer-btn:hover {
+    background: #00a085;
+}
+
+.disclaimer-btn:active {
+    transform: translateY(1px);
+}
+
+.main-content {
+    display: none;
+}
+
+.main-content.visible {
+    display: block;
+}
+
 .header h1 {
     font-size: 1.8rem;
     font-weight: 700;
