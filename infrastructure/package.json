@@ -7,7 +7,10 @@
     "capture": "node capture-questions.js",
     "capture:resume": "node capture-questions.js --resume",
     "capture:from-start": "node capture-questions.js --from=1",
-    "test": "node capture-questions.js --from=1 --test"
+    "test": "node capture-questions.js --from=1 --test",
+    "translate": "node translate-bamf.js",
+    "translate:resume": "node translate-bamf.js --resume",
+    "translate:test": "node translate-bamf.js --test"
   },
   "dependencies": {
     "playwright": "^1.49.0",
