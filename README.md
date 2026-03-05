@@ -2,6 +2,46 @@
 
 Complete German citizenship test preparation tool with all 310 official BAMF questions in German and English.
 
+## 📁 Project Structure
+
+```
+├── webapp/           # 🌐 Production web application
+│   ├── index.html    # Main quiz interface
+│   ├── app.js        # Quiz application logic
+│   ├── styles.css    # Styling and responsive design
+│   ├── sw.js         # Service worker for offline support
+│   ├── bamf-questions-merged.json  # Bilingual question data
+│   └── README.md     # Web app deployment guide
+│
+├── infrastructure/   # 🛠️ Development & maintenance tools
+│   ├── capture-questions.js    # BAMF website scraper
+│   ├── translate-bamf.js       # Translation automation
+│   ├── debug-question.js       # Debug utilities
+│   ├── package.json            # Node.js dependencies
+│   ├── bamf-questions.json     # German source data
+│   └── README.md               # Infrastructure usage guide
+│
+└── docs/            # 📚 Documentation (future)
+```
+
+## 🚀 Quick Start
+
+### For Users (Just want to use the quiz)
+```bash
+cd webapp
+python3 -m http.server 3000
+# Visit http://localhost:3000
+```
+
+### For Developers (Want to update data)
+```bash
+cd infrastructure
+npm install
+npm run capture      # Extract questions from BAMF website
+npm run translate    # Create English translations
+# Updated data automatically goes to webapp/bamf-questions-merged.json
+```
+
 ## 🌐 Web Application (GitHub Pages)
 
 **🔗 Live Demo: https://azhirahmadi.github.io/better-BAMF-LID-questions/**
@@ -36,9 +76,11 @@ Interactive quiz available at: `https://[your-github-username].github.io/better-
    - Use arrow keys for quick navigation
 4. **Focus on German**: See German text prominently, get English help only when needed
 
-## 📋 Data Collection Tool
+## 🛠️ Infrastructure Tools
 
-### How it works
+### Data Collection Tool
+
+#### How it works
 
 - Opens BAMF website with Playwright
 - Goes through each question 1-310
@@ -47,19 +89,20 @@ Interactive quiz available at: `https://[your-github-username].github.io/better-
 - Clicks answer to reveal correct one
 - Saves immediately to JSON
 
-### Smart handling
+#### Smart handling
 
 - **Skip**: Question exists + 100% correct → skip
 - **Replace**: Question exists + incomplete/wrong → replace  
 - **Add**: Question missing → insert in correct position
 
-### Setup
+#### Setup
 
 ```bash
+cd infrastructure
 npm install
 ```
 
-### Run Data Collection
+#### Run Data Collection
 
 ```bash
 # All questions (skip existing correct ones)
@@ -78,15 +121,17 @@ npm run test
 node capture-questions.js --from=50 --limit=10
 ```
 
-## 🌍 Translation Tool
+### 🌍 Translation Tool
 
-### Automated Google Translate Integration
+#### Automated Google Translate Integration
 
 The translation system converts German BAMF questions to English using Google Translate's free API, creating a bilingual JSON with safe keyed structure.
 
-### Run Translation
+#### Run Translation
 
 ```bash
+cd infrastructure
+
 # Translate all 310 questions
 node translate-bamf.js
 
@@ -103,7 +148,7 @@ node translate-bamf.js --from=50
 node translate-bamf.js --limit=10
 ```
 
-### Translation Features
+#### Translation Features
 
 - **Safe Structure**: Q/A/B/C/D keys prevent option misalignment
 - **Progress Tracking**: Saves progress every 5 questions
@@ -111,20 +156,6 @@ node translate-bamf.js --limit=10
 - **Rate Limiting**: 2-second delays respect Google's limits
 - **Resume Support**: Skip already completed translations
 - **Quality Control**: Validates completeness of translations
-
-## 📁 File Structure
-
-```
-├── index.html                  # Main web application (v3.0)
-├── styles.css                  # Mobile-first responsive CSS (v3.0)
-├── app.js                      # Quiz functionality with keyed options (v3.0)
-├── sw.js                       # Service worker for offline support
-├── bamf-questions.json         # German questions (310 total) - source data
-├── bamf-questions-merged.json  # Bilingual questions (Q/A/B/C/D structure) - primary
-├── capture-questions.js        # Data scraping tool
-├── translate-bamf.js          # Translation automation tool
-└── package.json               # Dependencies for scraper and translator
-```
 
 ## 🚀 Deploy to GitHub Pages
 
@@ -171,20 +202,6 @@ node translate-bamf.js --limit=10
     "translationService": "Google Translate",
     "structure": "BAMF Optimized (Q/A/B/C/D keys)"
   }
-}
-```
-
-**Legacy Structure** - German source data only:
-```json
-{
-  "questions": [
-    {
-      "number": 1,
-      "questionText": "In Deutschland dürfen Menschen...",
-      "options": ["option1", "option2", "option3", "option4"],
-      "correctAnswer": "option2"
-    }
-  ]
 }
 ```
 
@@ -235,9 +252,9 @@ node translate-bamf.js --limit=10
 - Progress tracking with accuracy statistics
 
 ### **Cache & Performance**
-- Service worker v2.0 with automatic cache updates
+- Service worker v3.0 with automatic cache updates
 - HTTP cache headers for immediate updates
-- Version-controlled assets (CSS/JS v2.0)
+- Version-controlled assets (CSS/JS v3.0)
 - Optimized for GitHub Pages hosting
 
 ## 📋 Version History
@@ -261,27 +278,6 @@ node translate-bamf.js --limit=10
 - **Keyed Options**: A/B/C/D structure prevents array-based translation errors
 - **Enhanced UI**: Updated to use new data structure with improved error handling
 - **Professional Disclaimers**: Styled warning box with comprehensive legal notices
-
-### **Version 2.0** - Enhanced Learning Experience
-🎯 **Major UX Improvements:**
-- **German-First Design**: Larger, bolder German text (1.3rem, font-weight: 600)
-- **Smart Translation System**: Individual EN/DE toggle buttons for questions, options, answers
-- **Direct Navigation**: "Go to Question" dropdown to jump to any question (1-310)
-- **Three Study Modes**: Quiz, Study, and Answers Only modes
-- **Cache Optimization**: Automatic updates without manual refresh needed
-
-🔧 **Technical Enhancements:**
-- Removed cluttered bilingual display - cleaner interface
-- Added translation state management with overlay system
-- Improved mobile responsiveness with better touch targets  
-- Enhanced service worker with automatic cache clearing
-- Version-controlled assets (CSS/JS v2.0) for reliable updates
-
-### **Version 1.0** - Initial Release
-- Complete question scraper for all 310 BAMF questions
-- Basic web interface with German/English language switching
-- Quiz and study modes with progress tracking
-- Mobile-responsive design with offline support
 
 ## ⚖️ Legal Notice & Disclaimer
 
