@@ -5,13 +5,12 @@ Complete German citizenship test preparation tool with all 310 official BAMF que
 ## 📁 Project Structure
 
 ```
-├── webapp/           # 🌐 Production web application
-│   ├── index.html    # Main quiz interface
-│   ├── app.js        # Quiz application logic
-│   ├── styles.css    # Styling and responsive design
-│   ├── sw.js         # Service worker for offline support
-│   ├── bamf-questions-merged.json  # Bilingual question data
-│   └── README.md     # Web app deployment guide
+├── index.html        # 🌐 Main quiz interface (GitHub Pages entry)
+├── app.js            # Quiz application logic  
+├── styles.css        # Styling and responsive design
+├── sw.js             # Service worker for offline support
+├── bamf-questions-merged.json  # Bilingual question data
+├── README.md         # This file - project documentation
 │
 ├── infrastructure/   # 🛠️ Development & maintenance tools
 │   ├── capture-questions.js    # BAMF website scraper
@@ -28,7 +27,7 @@ Complete German citizenship test preparation tool with all 310 official BAMF que
 
 ### For Users (Just want to use the quiz)
 ```bash
-cd webapp
+# Files are in root directory - ready for GitHub Pages
 python3 -m http.server 3000
 # Visit http://localhost:3000
 ```
@@ -39,7 +38,7 @@ cd infrastructure
 npm install
 npm run capture      # Extract questions from BAMF website
 npm run translate    # Create English translations
-# Updated data automatically goes to webapp/bamf-questions-merged.json
+# Updated data automatically goes to bamf-questions-merged.json in root
 ```
 
 ## 🌐 Web Application (GitHub Pages)

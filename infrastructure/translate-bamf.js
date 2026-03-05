@@ -15,7 +15,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const GERMAN_JSON_PATH = join(__dirname, 'bamf-questions.json');
-const BILINGUAL_JSON_PATH = join(__dirname, '..', 'webapp', 'bamf-questions-merged.json');
+const BILINGUAL_JSON_PATH = join(__dirname, '..', 'bamf-questions-merged.json');
 
 /** Random delay ~2 seconds (1500–2500 ms) to respect rate limits */
 function randomDelay() {
